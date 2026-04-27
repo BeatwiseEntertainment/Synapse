@@ -1,0 +1,14 @@
+[package]
+name = "Nexia"
+display_name = "Nexia"
+description = ""
+author = "BeatWise"
+version = "0.0.1"
+icon = "game/icon.png"
+
+[build]
+default = ["win64", "linux"]
+
+[directories]
+source = "game"
+build = "build"

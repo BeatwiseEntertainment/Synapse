@@ -1,0 +1,32 @@
+{
+    "click": [
+        "mouse:1"
+    ],
+    "control1": [
+        "key:a"
+    ],
+    "control2": [
+        "key:s"
+    ],
+    "control3": [
+        "key:d"
+    ],
+    "control4": [
+        "key:f"
+    ],
+    "control5": [
+        "key:h"
+    ],
+    "control6": [
+        "key:j"
+    ],
+    "control7": [
+        "key:k"
+    ],
+    "control8": [
+        "key:l"
+    ],
+    "main_control": [
+        "key:space"
+    ]
+}

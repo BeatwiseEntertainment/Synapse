@@ -1,0 +1,10 @@
+{
+    "viewportWidth": 1280,
+    "viewportHeight": 768,
+    "screenWidth": 1280,
+    "screenHeight": 768,
+    "fullscreen": false,
+    "resizable": false,
+    "vsync": 0,
+    "borderless": false
+}
