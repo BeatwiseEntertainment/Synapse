@@ -10,28 +10,26 @@ local colors = {
     bg = { lume.color("#0e0421") }
 }
 function SongSelectionState:enter()
-    self.assets = {}
-
     local path = "assets/images/game/"
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    self.assets["bg_deco"] = love.graphics.newImage(path .. "bg_deco.png")
-    self.assets["cape"] = love.graphics.newImage(path .. "cape.png")
-    self.assets["cool_disc"] = love.graphics.newImage(path .. "cool_disc.png")
-    self.assets["gradient"] = love.graphics.newImage(path .. "gradient_down.png")
-    self.assets["robozito"] = {}
+    self["bg_deco"] = love.graphics.newImage(path .. "bg_deco.png")
+    self["cape"] = love.graphics.newImage(path .. "cape.png")
+    self["cool_disc"] = love.graphics.newImage(path .. "cool_disc.png")
+    self["gradient"] = love.graphics.newImage(path .. "gradient_down.png")
+    self["robozito"] = {}
     local img = love.graphics.newImage(path .. "robozito.png")
-    self.assets["robozito"].img = img
-    self.assets["robozito"].quads = love.graphics.getQuads(img, path .. "robozito.json", "array")
+    self["robozito"].img = assetManager.getImage("dance_robot")
+    self["robozito"].quads = love.graphics.getQuads(img, path .. "robozito.json", "array")
 
-    self.assets.sounds = {}
+    self.sounds = {}
 
     self.vol = 0
-    self.assets.sounds["select"] = love.audio.newSource("assets/sounds/song_select.ogg", "stream")
-    self.assets.sounds["cry"] = love.audio.newSource("assets/sounds/cry.ogg", "stream")
-    self.assets.sounds["nulctrl"] = love.audio.newSource("assets/sounds/nulctrl.ogg", "stream")
-    self.assets.sounds["tutorial"] = love.audio.newSource("assets/sounds/tutorial.ogg", "stream")
+    self.sounds["select"] = assetManager.getAudio("sfx_song_select")
+    self.sounds["cry"] = assetManager.getAudio("sfx_cry")
+    self.sounds["nulctrl"] = assetManager.getAudio("sfx_nulctrl")
+    self.sounds["tutorial"] = assetManager.getAudio("sfx_tutorial")
 
     love.graphics.setBackgroundColor(colors.bg)
 
@@ -89,9 +87,9 @@ function SongSelectionState:enter()
         },
     }
 
-    self.assets.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
-    self.assets.sounds[self.songs[self.curSelected].name]:setVolume(self.vol)
-    self.assets.sounds[self.songs[self.curSelected].name]:play()
+    self.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
+    self.sounds[self.songs[self.curSelected].name]:setVolume(self.vol)
+    self.sounds[self.songs[self.curSelected].name]:play()
 
     flux.to(self, 1.6, { vol = 1 }):ease("linear")
 
@@ -130,16 +128,16 @@ function SongSelectionState:draw()
     love.graphics.setColor(1, 1, 1, 1)
 
     love.graphics.draw(
-        self.assets["robozito"].img,
-        self.assets["robozito"].quads[self.robotFrame],
+        self["robozito"].img,
+        self["robozito"].quads[self.robotFrame],
         shove.getViewportWidth() * 0.5 - 400, 16, 0, 3.5, 3.5
     )
 
-    love.graphics.draw(self.assets["cape"],
+    love.graphics.draw(self["cape"],
         self.capeX, self.capeY, math.rad(Shake.rotation),
         self.capeScale, self.capeScale,
-        self.assets["cape"]:getWidth() * 0.5,
-        self.assets["cape"]:getHeight() * 0.5
+        self["cape"]:getWidth() * 0.5,
+        self["cape"]:getHeight() * 0.5
     )
 
     love.graphics.setColor(colors.fg)
@@ -195,44 +193,44 @@ function SongSelectionState:draw()
     end
     love.graphics.setColor(1, 1, 1, 1)
 
-    love.graphics.draw(self.assets["gradient"], 0, self.transitionScreenY, 0, 1, 1)
+    love.graphics.draw(self["gradient"], 0, self.transitionScreenY, 0, 1, 1)
     love.graphics.setColor(colors.bg)
-    love.graphics.rectangle("fill", 0, self.assets["gradient"]:getHeight() + self.transitionScreenY, shove.getViewportWidth(), shove.getViewportHeight() * 2)
+    love.graphics.rectangle("fill", 0, self["gradient"]:getHeight() + self.transitionScreenY, shove.getViewportWidth(), shove.getViewportHeight() * 2)
     love.graphics.setColor(1, 1, 1, 1)
 end
 
 function SongSelectionState:update(elapsed)
     if self.songs[self.curSelected] then
         Conductor.bpm = self.songs[self.curSelected].bpm
-        Conductor.songPos = self.assets.sounds[self.songs[self.curSelected].name]:tell() * 1000
+        Conductor.songPos = self.sounds[self.songs[self.curSelected].name]:tell() * 1000
         Conductor:update(elapsed)
 
         self.discAngle = self.discAngle + 20 * elapsed
 
-        if self.assets.sounds[self.songs[self.curSelected].name]:tell() >= self.songs[self.curSelected].secondsPreview + self.songs[self.curSelected].startPreview and not self.inTransition then
-            --self.assets.sounds[self.songs[self.curSelected].name]:tell()
+        if self.sounds[self.songs[self.curSelected].name]:tell() >= self.songs[self.curSelected].secondsPreview + self.songs[self.curSelected].startPreview and not self.inTransition then
+            --self.sounds[self.songs[self.curSelected].name]:tell()
             self.inTransition = true
             flux.to(self, 1.6, { vol = 0 })
                 :oncomplete(function()
-                    self.assets.sounds[self.songs[self.curSelected].name]:stop()
-                    self.assets.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
+                    self.sounds[self.songs[self.curSelected].name]:stop()
+                    self.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
 
                     flux.to(self, 1.6, { vol = 1 })
                         :ease("linear")
                         :onstart(function()
-                            self.assets.sounds[self.songs[self.curSelected].name]:play()
+                            self.sounds[self.songs[self.curSelected].name]:play()
                             self.inTransition = false
                         end)
                         :delay(1)
                 end)
         end
 
-        self.assets.sounds[self.songs[self.curSelected].name]:setVolume(self.vol)
+        self.sounds[self.songs[self.curSelected].name]:setVolume(self.vol)
     end
 
     local beatProgress = (Conductor.songPos % Conductor.crochet) / Conductor.crochet
 
-    self.robotFrame = math.floor(beatProgress * #self.assets["robozito"].quads) + 1
+    self.robotFrame = math.floor(beatProgress * #self["robozito"].quads) + 1
 
     self.capeScale = math.lerp(self.capeScale, 4, 0.057)
 
@@ -257,7 +255,7 @@ local function reset(self)
     self.vol = 0
 
     if self.songs[self.curSelected] then
-        self.assets.sounds[self.songs[self.curSelected].name]:stop()
+        self.sounds[self.songs[self.curSelected].name]:stop()
     end
 end
 
@@ -270,9 +268,9 @@ local function updateSelectionSong(self)
     end
 
     if self.songs[self.curSelected] then
-        self.assets.sounds[self.songs[self.curSelected].name]:stop()
-        self.assets.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
-        self.assets.sounds[self.songs[self.curSelected].name]:play()
+        self.sounds[self.songs[self.curSelected].name]:stop()
+        self.sounds[self.songs[self.curSelected].name]:seek(self.songs[self.curSelected].startPreview)
+        self.sounds[self.songs[self.curSelected].name]:play()
         flux.to(self, 1.6, { vol = 1 }):ease("linear")
     end
 end
@@ -298,13 +296,13 @@ function SongSelectionState:keypressed(k)
         flux.to(self, 0.5, { vol = 0 })
             :ease("linear")
             :oncomplete(function()
-                self.assets.sounds[self.songs[self.curSelected].name]:stop()
+                self.sounds[self.songs[self.curSelected].name]:stop()
             end)
 
-        self.assets.sounds["select"]:setPitch(math.random(74, 125) / 100)
-        self.assets.sounds["select"]:play()
+        self.sounds["select"]:setPitch(math.random(74, 125) / 100)
+        self.sounds["select"]:play()
 
-        flux.to(self, 2, { transitionScreenY = -(self.assets["gradient"]:getHeight() + shove.getViewportHeight()) })
+        flux.to(self, 2, { transitionScreenY = -(self["gradient"]:getHeight() + shove.getViewportHeight()) })
             :ease("sineinout")
             :oncomplete(function()
                 PlayState.songName = self.songs[self.curSelected].name:gsub(" ", "_")
@@ -315,10 +313,10 @@ function SongSelectionState:keypressed(k)
 end
 
 function SongSelectionState:leave()
-    for key, value in pairs(self.assets.sounds) do
+    for key, value in pairs(self.sounds) do
         value:stop()
     end
-    love.graphics.release(self.assets)
+    love.graphics.release(self)
 end
 
 return SongSelectionState

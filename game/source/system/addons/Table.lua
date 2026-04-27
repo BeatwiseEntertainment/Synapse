@@ -7,6 +7,15 @@ function table.contains(_table, _value)
     return false
 end
 
+function table.pcontains(_table, _value)
+    for k, v in pairs(_table) do
+        if k == _value or v == _value then
+            return true
+        end
+    end
+    return false
+end
+
 function table.push(t, ...)
     local n = select("#", ...)
     for i = 1, n do
@@ -35,19 +44,19 @@ end
 function table.concatf(tbl, sep, transform)
     sep = sep or ""
     transform = transform or function(k, v) return v end
-    
+
     local result = {}
     for k, v in pairs(tbl) do
         result[#result + 1] = tostring(transform(k, v))
     end
-    
+
     return table.concat(result, sep)
 end
 
 function table.find(t, val, idx)
     idx = idx or 1
     if idx < 0 then idx = #t + idx + 1 end
-    for i = idx,#t do
+    for i = idx, #t do
         if t[i] == val then return i end
     end
     return nil
@@ -67,14 +76,15 @@ function table.compare(t1, t2)
     for k, v in pairs(t1) do
         if type(v) == "table" and type(t2[k]) == "table" then
             if not table.compare(v, t2[k]) then return false end
-        elseif v ~= t2[k] then return false end
+        elseif v ~= t2[k] then
+            return false
+        end
     end
 
     return true
 end
 
 function table.clear(t)
-
     local getiter = function(x)
         if type(x) == "table" and x[1] ~= nil then
             return ipairs

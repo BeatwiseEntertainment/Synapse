@@ -12,6 +12,13 @@ local function newAudio(key, name, importMode)
     assetManager.loadAudio(key, path, importMode)
 end
 
+local function newFont(key, name)
+    local root = "assets/fonts"
+    local path = string.format("%s/%s", root, name)
+
+    assetManager.loadFont(key, path)
+end
+
 return function()
     newImage("cursor", "cursor.png")
     newImage("cool_disc", "cool_disc.png")
@@ -32,9 +39,15 @@ return function()
     newImage("particles", "particles.png")
     newImage("notes", "notes.png")
 
-    newAudio("menu_main", "music/future_base.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_future_base", "music/future_base.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_tutorial", "music/tutorial.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_cry", "music/cry.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_nulctrl", "music/nulctrl.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_tutorial", "music/tutorial.ogg", assetManager.AudioMode.STATIC)
     newAudio("sfx_back", "back.ogg", assetManager.AudioMode.STATIC)
     newAudio("sfx_jump", "jump.ogg", assetManager.AudioMode.STATIC)
     newAudio("sfx_song_select", "song_select.ogg", assetManager.AudioMode.STATIC)
     newAudio("sfx_hit", "hit.ogg", assetManager.AudioMode.STATIC)
+
+    newFont("monogram", "monogram.ttf")
 end

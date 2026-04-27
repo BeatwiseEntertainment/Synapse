@@ -20,10 +20,10 @@ function MenuState:enter()
     self.logoAngle = 0
     self.logoBeat = 3.45
 
-    self.fontOptions = fontcache.getFont("monogram", 80)
-    self.fontCreds = fontcache.getFont("monogram", 39)
+    self.fontOptions = assetManager.getFont("monogram", 80)
+    self.fontCreds = assetManager.getFont("monogram", 39)
 
-    self.song = assetManager.getAudio("future_base")
+    self.song = assetManager.getAudio("msc_future_base")
 
     self.camera = camera(shove.getViewportWidth() * 0.5, -shove.getViewportWidth())
 
@@ -34,7 +34,8 @@ function MenuState:enter()
         end
     end
 
-    Conductor.bpm = 91
+
+    Conductor.bpm = 90.75
     Conductor.songPos = 0
 
     self.song:setLooping(true)
@@ -42,7 +43,9 @@ function MenuState:enter()
     self.song:play()
 
     flux.to(self.camera, 2.5, { y = shove.getViewportHeight() * 0.5 })
-        :ease("backinout"):delay(0.076):oncomplete(function() self.canPlay = true end)
+        :ease("backinout")
+        :delay(0.076)
+        :oncomplete(function() self.canPlay = true end)
 
     self.currentOption = 1
     self.startY = shove.getViewportHeight() * 0.5 - 100

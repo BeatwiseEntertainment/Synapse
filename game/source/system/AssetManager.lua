@@ -38,7 +38,10 @@ local function newPool()
             pool = {},
         },
         shaders = {},
-        data = {}
+        data = {
+            quadsData = {},
+            misc = {},
+        }
     }
 end
 
@@ -74,7 +77,7 @@ function LoadingState:draw()
         icon:getWidth() * 0.5, icon:getHeight() * 0.5
     )
 
-    local percentage = math.floor(shove.getViewportWidth() - 64 / (LoadingState.percentage / 100))
+    local percentage = math.floor((shove.getViewportWidth() - 64) * LoadingState.percentage)
     love.graphics.rectangle("fill", 32, shove.getViewportHeight() - 48,
         percentage, 32
     )
@@ -136,8 +139,16 @@ function AssetManager.loadAudio(key, path, audioType)
     loveloader.newSource(AssetManager.assets[namespace].audios[audioType], assetKey, path, audioType)
 end
 
-function AssetManager.loadFont()
+function AssetManager.loadFont(key, path)
+    local namespace, assetKey = getNamespace(key)
+    AssetManager.assets[namespace].fonts.paths[assetKey] = path
+    --loveloader.read(AssetManager.assets[namespace].fonts.paths, assetKey, path)
+end
 
+function AssetManager.loadSpritesheet(key, pathimg, pathjson)
+    local namespace, assetKey = getNamespace(key)
+    loveloader.newImage(AssetManager.assets[namespace].images.spritesheet, assetKey, path)
+    loveloader.newImage(AssetManager.assets[namespace].data.quadsData, assetKey, pathimg, pathjson)
 end
 
 ---------------------------------------------------------------------
@@ -155,8 +166,102 @@ function AssetManager.getAudio(key, mode)
     return AssetManager.assets[namespace].audios[mode][assetKey]
 end
 
-function AssetManager.release()
+function AssetManager.getFont(key, size)
+    local namespace, assetKey = getNamespace(key)
 
+    if not table.pcontains(AssetManager.assets[namespace].fonts.paths, assetKey) then
+        error(string.format("[ERROR] : The font %s is not on the path", _name))
+    end
+
+    local namedata = assetKey .. "-" .. size
+    if AssetManager.assets[namespace].fonts.pool[namedata] then
+        return AssetManager.assets[namespace].fonts.pool[namedata]
+    else
+        AssetManager.assets[namespace].fonts.pool[namedata] = love.graphics.newFont(AssetManager.assets[namespace].fonts.paths[key], size)
+        return AssetManager.assets[namespace].fonts.pool[namedata]
+    end
+
+    --for p = 1, #FontCache.paths, 1 do
+    --    local path = FontCache.paths[p]:match("[^/]+$"):gsub(".ttf", "")
+    --    if path == name then
+    --        local fontdata = name .. "-" .. size
+    --        if FontCache.pool[fontdata] then
+    --            return FontCache.pool[fontdata]
+    --        else
+    --            FontCache.pool[fontdata] = love.graphics.newFont(FontCache.paths[p], size)
+    --            return FontCache.pool[fontdata]
+    --        end
+    --    end
+    --end
+    --error(string.format("[ERROR] : The font %s is not on the path", _name))
+end
+
+function AssetManager.release()
+    for namespace, pool in pairs(AssetManager.assets) do
+        for key, image in pairs(pool.images.static) do
+            if image.release then
+                image:release()
+                if love.FEATURE_FLAGS.debug then
+                    io.printf(string.format(
+                        "{bgBrightMagenta}{brightCyan}{bold}[Love.AssetManager]{reset}{white} : Image released with {brightGreen}sucess{reset} | {bold}{underline}{brightYellow}%s{reset}",
+                        key
+                    ))
+                end
+            end
+        end
+        for key, image in pairs(pool.images.spritesheet) do
+            if type(image) == "table" then
+                table.clear(image)
+            else
+                if image.release then
+                    image:release()
+                    if love.FEATURE_FLAGS.debug then
+                        io.printf(string.format(
+                            "{bgBrightMagenta}{brightCyan}{bold}[Love.AssetManager]{reset}{white} : Image released with {brightGreen}sucess{reset} | {bold}{underline}{brightYellow}%s{reset}",
+                            key
+                        ))
+                    end
+                end
+            end
+        end
+
+        for key, audio in pairs(pool.audios.static) do
+            if audio.release then
+                audio:release()
+                if love.FEATURE_FLAGS.debug then
+                    io.printf(string.format(
+                        "{bgBrightMagenta}{brightCyan}{bold}[Love.AssetManager]{reset}{white} : Audio released with {brightGreen}sucess{reset} | {bold}{underline}{brightYellow}%s{reset}",
+                        key
+                    ))
+                end
+            end
+        end
+        for key, audio in pairs(pool.audios.stream) do
+            if audio.release then
+                audio:release()
+                if love.FEATURE_FLAGS.debug then
+                    io.printf(string.format(
+                        "{bgBrightMagenta}{brightCyan}{bold}[Love.AssetManager]{reset}{white} : Audio released with {brightGreen}sucess{reset} | {bold}{underline}{brightYellow}%s{reset}",
+                        key
+                    ))
+                end
+            end
+        end
+
+        for key, font in pairs(pool.fonts.pool) do
+            if font.release then
+                font:release()
+                if love.FEATURE_FLAGS.debug then
+                    io.printf(string.format(
+                        "{bgBrightMagenta}{brightCyan}{bold}[Love.AssetManager]{reset}{white} : Font released with {brightGreen}sucess{reset} | {bold}{underline}{brightYellow}%s{reset}",
+                        key
+                    ))
+                end
+            end
+        end
+
+        table.clear(pool.data.misc)
+    end
 end
 
 return AssetManager

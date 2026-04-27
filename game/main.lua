@@ -145,5 +145,6 @@ function love.update(elapsed)
 end
 
 function love.quit()
+    assetManager.release()
     discordrpc.shutdown()
 end
