@@ -32,10 +32,8 @@ function Song:encode()
     })
 end
 
-function Song:loadAudio()
-    --if love.filesystem.getInfo("assets/sounds/" .. self.song .. ".ogg") == nil then return end
-
-    self.source = love.audio.newSource("assets/sounds/" .. self.song .. ".ogg", "static")
+function Song:loadAudio(audioSource)
+    self.source = audioSource
     self.songLoaded = true
 end
 

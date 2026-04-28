@@ -313,7 +313,7 @@ function PlayState:enter()
     self.assets["numbers"].img = img
     self.assets["numbers"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "numbers.json"), "hash")
     img = nil
-    self.assets["heart"] = assetManager.getImage("heart.png")
+    self.assets["heart"] = assetManager.getImage("heart")
 
     self.assets.sounds = {}
     self.assets.sounds["hit"] = assetManager.getAudio("sfx_hit")
@@ -420,7 +420,7 @@ function PlayState:enter()
     self.scoreFont = fontcache.getFont("monogram", 100)
 
     self.song:loadFromJson(PlayState.songName)
-    self.song:loadAudio()
+    self.song:loadAudio("msc_" .. PlayState.songName)
     self.song.source:setVolume(1)
     Conductor.songPos = 0
 
@@ -767,8 +767,6 @@ end
 
 function PlayState:leave()
     self.song:stop()
-    --self.song:release()
-    love.graphics.release(self.assets)
 end
 
 return PlayState
