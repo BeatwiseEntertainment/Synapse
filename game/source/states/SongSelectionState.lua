@@ -14,10 +14,9 @@ function SongSelectionState:enter()
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    self["bg_deco"] = love.graphics.newImage(path .. "bg_deco.png")
-    self["cape"] = love.graphics.newImage(path .. "cape.png")
-    self["cool_disc"] = love.graphics.newImage(path .. "cool_disc.png")
-    self["gradient"] = love.graphics.newImage(path .. "gradient_down.png")
+    self["cape"] = assetManager.getImage("cape")
+    self["cool_disc"] = assetManager.getImage("cool_disc")
+    self["gradient"] = assetManager.getImage("gradient_down")
     self["robozito"] = {}
     self["robozito"].img = assetManager.getImage("dance_robot")
     self["robozito"].quads = love.graphics.getQuads(self["robozito"].img, love.filesystem.read(path .. "dance_robot.json"), "array")
@@ -32,9 +31,9 @@ function SongSelectionState:enter()
 
     love.graphics.setBackgroundColor(colors.bg)
 
-    self.fontTitle = fontcache.getFont("monogram", 80)
-    self.fontSong = fontcache.getFont("monogram", 55)
-    self.fontSelect = fontcache.getFont("monogram", 45)
+    self.fontTitle = assetManager.getFont("monogram", 80)
+    self.fontSong = assetManager.getFont("monogram", 55)
+    self.fontSelect = assetManager.getFont("monogram", 45)
 
     Event.hook(Conductor, { "beatHit" })
     Conductor.beatHit = function()
@@ -315,7 +314,6 @@ function SongSelectionState:leave()
     for key, value in pairs(self.sounds) do
         value:stop()
     end
-    love.graphics.release(self)
 end
 
 return SongSelectionState

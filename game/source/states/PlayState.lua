@@ -262,9 +262,9 @@ local function win(self)
 end
 
 function PlayState:enter()
-    self.ratingScreen = require 'src.States.Substates.RatingSubstate'
-    self.pauseScreen = require 'src.States.Substates.PausedSubstate'
-    self.gameOverScreen = require 'src.States.Substates.GameOverSubstate'
+    self.ratingScreen = require 'source.states.Substates.RatingSubstate'
+    self.pauseScreen = require 'source.states.Substates.PausedSubstate'
+    self.gameOverScreen = require 'source.states.Substates.GameOverSubstate'
 
 
     self.assets = {}
@@ -273,53 +273,52 @@ function PlayState:enter()
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    local img = love.graphics.newImage(path .. "hit_lane.png")
+    local img = assetManager.getImage("hit_lane")
     self.assets["hit_lane"].img = img
-    self.assets["hit_lane"].quads = love.graphics.getQuads(img, path .. "hit_lane.json", "hash")
+    self.assets["hit_lane"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hit_lane.json"), "hash")
 
-    self.assets["scoretxt"] = love.graphics.newImage(path .. "score.png")
+    self.assets["scoretxt"] = assetManager.getImage("score")
 
-    local img = love.graphics.newImage(path .. "player.png")
+    local img = assetManager.getImage("player")
     self.assets["player"] = {}
     self.assets["player"].img = img
-    self.assets["player"].quads = love.graphics.getQuads(img, path .. "player.json", "hash")
+    self.assets["player"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "player.json"), "hash")
     img = nil
 
-    self.assets["glow"] = love.graphics.newImage(path .. "glow.png")
-    self.assets["saw"] = love.graphics.newImage(path .. "saw.png")
+    self.assets["glow"] = assetManager.getImage("glow")
+    self.assets["saw"] = assetManager.getImage("saw")
     --self.assets["hit"] = love.graphics.newImage(path .. "hitter.png")
 
     self.showGameOver = false
 
-
     self.assets["particles"] = {}
-    local img = love.graphics.newImage(path .. "particles.png")
+    local img = assetManager.getImage("particles")
     self.assets["particles"].img = img
-    self.assets["particles"].quads = love.graphics.getQuads(img, path .. "particles.json", "array")
+    self.assets["particles"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "particles.json"), "array")
 
     self.assets["hit"] = {}
-    local img = love.graphics.newImage(path .. "hitter.png")
+    local img = assetManager.getImage("hitter")
     self.assets["hit"].img = img
-    self.assets["hit"].quads = love.graphics.getQuads(img, path .. "hitter.json", "array")
+    self.assets["hit"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hitter.json"), "array")
     img = nil
 
-    local img = love.graphics.newImage(path .. "judments.png")
+    local img = assetManager.getImage("judments")
     self.assets["judments"] = {}
     self.assets["judments"].img = img
-    self.assets["judments"].quads = love.graphics.getQuads(img, path .. "judments.json", "hash")
+    self.assets["judments"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "judments.json"), "hash")
     img = nil
 
-    local img = love.graphics.newImage(path .. "numbers.png")
+    local img = assetManager.getImage("numbers")
     self.assets["numbers"] = {}
     self.assets["numbers"].img = img
-    self.assets["numbers"].quads = love.graphics.getQuads(img, path .. "numbers.json", "hash")
+    self.assets["numbers"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "numbers.json"), "hash")
     img = nil
-    self.assets["heart"] = love.graphics.newImage(path .. "heart.png")
+    self.assets["heart"] = assetManager.getImage("heart.png")
 
     self.assets.sounds = {}
-    self.assets.sounds["hit"] = love.audio.newSource("assets/sounds/hit.ogg", "stream")
-    self.assets.sounds["jump"] = love.audio.newSource("assets/sounds/jump.ogg", "stream")
-    self.assets["gradient"] = love.graphics.newImage(path .. "gradient.png")
+    self.assets.sounds["hit"] = assetManager.getAudio("sfx_hit")
+    self.assets.sounds["jump"] = assetManager.getAudio("sfx_jump")
+    self.assets["gradient"] = assetManager.getImage("gradient")
 
 
     for key, value in pairs(self.assets) do
@@ -373,7 +372,7 @@ function PlayState:enter()
 
     Conductor.offset = 0
 
-    self.fontPlayAnnouce = fontcache.getFont("monogram", 40)
+    self.fontPlayAnnouce = assetManager.getFont("monogram", 40)
 
     self.objects = {} -- stores the effects XD
 

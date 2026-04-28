@@ -21,6 +21,7 @@ end
 
 return function()
     newImage("cursor", "cursor.png")
+    newImage("cape", "cape.png")
     newImage("cool_disc", "cool_disc.png")
     newImage("heart", "heart.png")
     newImage("main_logo", "logo.png")
@@ -38,6 +39,7 @@ return function()
     newImage("player", "player.png")
     newImage("particles", "particles.png")
     newImage("notes", "notes.png")
+    newImage("gradient_down", "gradient_down.png")
 
     newAudio("msc_future_base", "music/future_base.ogg", assetManager.AudioMode.STATIC)
     newAudio("msc_tutorial", "music/tutorial.ogg", assetManager.AudioMode.STATIC)
