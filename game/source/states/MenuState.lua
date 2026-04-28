@@ -122,8 +122,6 @@ function MenuState:keypressed(k)
         end
     elseif k == "return" then
         local choose = self.options[self.currentOption]
-        print(choose)
-
         switch(choose, {
             ["play"] = function()
                 self.song:stop()

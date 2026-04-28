@@ -1,167 +1,126 @@
 love.mixer = {}
 
----@class MixerChannel
----@field playing boolean
----@field volume number
----@field looping boolean
----@field pitch number
----@field tags table<string>
+---@type love.MixerPlaybackOptions
+love.MixerPlaybackOptions = {
+    loop = false,
+    pitch = 1,
+    volume = 1,
+}
+
 local MixerChannel = {}
 MixerChannel.__index = MixerChannel
 
-function MixerChannel.new()
+function MixerChannel.new(maxSourceCount)
     local self = setmetatable({}, MixerChannel)
-    self.type = "channel"
-    self.playing = false
-    self.looping = false
     self.volume = 1
     self.pitch = 1
-    self.tag = ""
+    self.loop = false
+    self._tags = {}
+    self._sources = {}
     return self
 end
 
-local function updateSourceSettings(source, channel)
-    source:setLooping(channel.looping)
-    source:setVolume(channel.volume)
-    source:setPitch(channel.pitch)
-end
+function MixerChannel:_play() end
 
----@class Mixer
----@field sourceCount number
----@field channelCount number
----@field maxSources number
----@field sources table<love.Source>
----@field channels table<MixerChannel>
 local Mixer = {}
 Mixer.__index = Mixer
 
-function Mixer.new()
+---Create a new mixer instance
+---@param maxSourceCount integer
+---@return love.Mixer
+function Mixer.new(maxSourceCount)
     local self = setmetatable({}, Mixer)
-    self.sourceCount = 0
-    self.channelCount = 0
-    self.maxSources = 0
-    self.sources = {}
-    self.channels = {}
+    self._sourceAssets = {} ---@type record<string, love.Source>
+    self._channels = {} ---@type record<string, love.MixerChannel>
+    self._maxSounds = maxSourceCount ---@type integer
+    self._sourcesCount = 0
+    self._channelsCount = 0
+
+    -- public --
+    self.masterVolume = 1 ---@type float
+    self.masterPitch = 1 ---@type float
     return self
 end
 
-function Mixer:addSource(source, tag)
-    assert(type(source) == "userdata", "[LoveMixer] : Invalid type, expected 'source', got: " .. type(source))
-    self.sourceCount = self.sourceCount + 1
+---Add a new source on the mixer rack
+---@param tag string
+---@param source Love.Source
+function Mixer:addSource(tag, source)
+    self._sourcesCount = self._sourcesCount + 1
 
-    if self.sourceCount > self.maxSources then
-        error("[LoveMixer] : You have reached the max allowed source count, please increase the source count or remove some sources!")
+    if self._sourcesCount > self.maxSounds then
+        error("[Love.Mixer] : The mixer reached the max allowed source count. maxSounds = " .. self._maxSounds)
+    end
+
+    if type(tag) == "nil" then
+        tag = "snd_" .. self._sourcesCount
+    end
+
+    self._sourceAssets[tag] = source
+end
+
+---Create a new channel and attach to the rack
+---@param channelName string
+function Mixer:addChannel(channelName)
+    if self._channels[channelName] then
+        -- ignore if the channel already exists --
         return
     end
 
-    tag = tag or "Source_" .. self.sourceCount
-    self.sources[tag] = source
-end
+    self._channelsCount = self._channelsCount + 1
 
-function Mixer:addChannel(channel, tag)
-    assert(channel.type == "channel", "[LoveMixer] : Invalid type, expected 'channel', got: " .. type(channel))
-    self.channelCount = self.channelCount + 1
-
-    tag = tag or "Channel_" .. self.channelCount
-    self.channels[tag] = channel
-end
-
-function Mixer:getChannelVolume(channel)
-    if not self.channels[channel] then return end
-
-    return self.channels[channel].volume
-end
-
-function Mixer:setChannelVolume(channel, value)
-    if not self.channels[channel] then return end
-
-    self.channels[channel].volume = value
-end
-
-function Mixer:getChannelPitch(channel)
-    if not self.channels[channel] then return end
-
-    return self.channels[channel].pitch
-end
-
-function Mixer:setChannelPitch(channel, value)
-    if not self.channels[channel] then return end
-
-    self.channels[channel].pitch = value
-end
-
-function Mixer:getChannelLoop(channel)
-    if not self.channels[channel] then return end
-
-    return self.channels[channel].looping
-end
-
-function Mixer:setChannelLoop(channel, value)
-    if not self.channels[channel] then return end
-
-    self.channels[channel].looping = value
-end
-
-function Mixer:playChannel(channel, tag)
-    self.channels[channel].tag = tag
-    self.sources[tag]:play()
-    self.channels[channel].playing = self.sources[tag]:isPlaying()
-end
-
-function Mixer:pauseChannel(channel, tag)
-    self.channels[channel].tag = tag
-    self.sources[tag]:pause()
-    self.channels[channel].playing = self.sources[tag]:isPlaying()
-end
-
-function Mixer:stopChannel(channel, tag)
-    self.sources[tag]:stop()
-    self.channels[channel].playing = self.sources[tag]:isPlaying()
-    self.channels[channel].tag = ""
-end
-
-function Mixer:play(tag)
-    if self.sources[tag] then
-        self.sources[tag]:play()
+    if type(channelName) == "nil" then
+        channelName = "chn_" .. self._channelsCount
     end
+
+    local channelInstance = MixerChannel.new()
+    self._channels[channelName] = channelInstance
 end
 
-function Mixer:stop(tag)
-    if self.sources[tag] then
-        self.sources[tag]:stop()
+function Mixer:playChannel(channelName, tag, settings)
+    settings = settings or {
+        loop = false,
+        volume = 1,
+        pitch = 1,
+    }
+
+    if type(channelName) == "nil" then
+        return
     end
-end
 
-function Mixer:pause(tag)
-    if self.sources[tag] then
-        self.sources[tag]:pause()
+    if type(tag) == "nil" then
+        return
     end
+
+    local channel = self._channels[channelName]
+    local sound = self._sourceAssets[tag]
+
+    channel._sounds[tag] = sound
+
+    channel.volume = settings.volume
+    channel.pitch = settings.pitch
+    channel.loop = settings.loop
+
+    sound:play()
 end
 
----update the mixer management
+---update all values of the mixer --
 function Mixer:update()
-    if self.channelCount <= 0 then return end
-    for name, channel in pairs(self.channels) do
-        if self.sources[channel.tag] then
-            updateSourceSettings(self.sources[channel.tag], channel)
+    for channelName, channel in pairs(self._channels) do
+        for tag, source in pairs(channel._sounds) do
+            source:setVolume(self.masterVolume * channel.volume)
+            source:setPitch(channel.volume)
+            source:setLooping(channelName.loop)
+
+            if source:isPlaying() and not source:isLooping() then
+                table.removeItem(channel._sounds, tag)
+            end
         end
     end
 end
 
----create a new instance of a mixer
----@param maxSources number
----@return Mixer
-function love.mixer.newMixer(maxSources)
-    maxSources = maxSources or 4
-    local m = Mixer.new()
-    m.maxSources = maxSources
-    return m
-end
-
----Create a new channel to be used in mixer
----@return MixerChannel
-function love.mixer.newChannel()
-    return MixerChannel.new()
+function love.mixer.newMixer()
+    return Mixer.new()
 end
 
 return love.mixer
