@@ -1,9 +1,9 @@
 PausedSubstate = {}
 
 function PausedSubstate:load()
-    self.fontPausedTitle = fontcache.getFont("monogram", 80)
-    self.fontPaused = fontcache.getFont("monogram", 55)
-    self.fontSelect = fontcache.getFont("monogram", 45)
+    self.fontPausedTitle = assetManager.getFont("monogram", 80)
+    self.fontPaused = assetManager.getFont("monogram", 55)
+    self.fontSelect = assetManager.getFont("monogram", 45)
 end
 
 function PausedSubstate:draw()

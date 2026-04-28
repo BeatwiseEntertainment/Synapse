@@ -1,31 +1,28 @@
 RatingSubstate = {}
 
-local Shake = require 'src.Modules.Game.Shake'
-
 local colors = {
     fg = { lume.color("#ffb84a") },
     bg = { lume.color("#0e0421") }
 }
 
 function RatingSubstate:load()
-    local path = "assets/images/game/"
-    self.bgpanel = love.graphics.newImage(path .. "digi_player.png")
-    self.bgpanel:setFilter("nearest", "nearest")
+    local path = "assets/images/"
+    self.bgpanel = assetManager.getImage("digi_player")
+    --self.bgpanel:setFilter("nearest", "nearest")
 
     self.inTransition = false
-    self.gradient = love.graphics.newImage(path .. "gradient_down.png")
+    self.gradient = assetManager.getImage("gradient_down")
     self.transitionScreenY = shove.getViewportWidth()
 
-    self.disc = love.graphics.newImage(path .. "cool_disc.png")
+    self.disc = assetManager.getImage("cool_disc")
     self.disc:setFilter("nearest", "nearest")
 
-    self.fontRate = fontcache.getFont("monogram", 60)
-    self.fontAcc = fontcache.getFont("monogram", 45)
+    self.fontRate = assetManager.getFont("monogram", 60)
+    self.fontAcc = assetManager.getFont("monogram", 45)
 
     self.ratings = {}
-    self.ratings.img = love.graphics.newImage(path .. "ratings.png")
-    self.ratings.quads = love.graphics.getQuads(self.ratings.img, path .. "ratings.json", "hash")
-    self.ratings.img:setFilter("nearest", "nearest")
+    self.ratings.img = assetManager.getImage("ratings")
+    self.ratings.quads = love.graphics.getQuads(self.ratings.img, love.filesystem.read(path .. "ratings.json"), "hash")
 
     self.discAngle = 0
 

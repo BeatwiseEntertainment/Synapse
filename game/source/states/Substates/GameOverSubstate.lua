@@ -6,11 +6,10 @@ local colors = {
 }
 
 function GameOverSubstate:load()
-    self.robot = love.graphics.newImage("assets/images/game/broken_robot.png")
+    self.robot = assetManager.getImage("broken_robot")
 
-
-    self.fontTitle = fontcache.getFont("monogram", 80)
-    self.fontSong = fontcache.getFont("monogram", 55)
+    self.fontTitle = assetManager.getFont("monogram", 80)
+    self.fontSong = assetManager.getFont("monogram", 55)
 end
 
 function GameOverSubstate:draw()

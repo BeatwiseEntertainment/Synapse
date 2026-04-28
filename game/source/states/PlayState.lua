@@ -94,8 +94,8 @@ local function generateSong(self)
             n.hitbox.active = false
         end
 
-        n.img = self.assets["hit"].img
-        n.quads = self.assets["hit"].quads
+        n.img = self["hit"].img
+        n.quads = self["hit"].quads
 
         if n.lane == 1 then
             n.y = self.field.y - self.field.spacing
@@ -159,8 +159,8 @@ local function processHit(self, lane)
                 local halfY = shove.getViewportHeight() * 0.5 + 200
 
                 table.insert(self.objects, Judment:new(
-                    self.assets["judments"].img,
-                    self.assets["judments"].quads[judge],
+                    self["judments"].img,
+                    self["judments"].quads[judge],
                     math.random(halfX - 32, halfX + 32),
                     math.random(halfY - 8, halfY + 8), 0.76
                 ))
@@ -266,75 +266,62 @@ function PlayState:enter()
     self.pauseScreen = require 'source.states.Substates.PausedSubstate'
     self.gameOverScreen = require 'source.states.Substates.GameOverSubstate'
 
-
-    self.assets = {}
-    local path = "assets/images/game/"
-    self.assets["hit_lane"] = {}
+    local path = "assets/images/"
+    self["hit_lane"] = {}
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     local img = assetManager.getImage("hit_lane")
-    self.assets["hit_lane"].img = img
-    self.assets["hit_lane"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hit_lane.json"), "hash")
+    self["hit_lane"].img = img
+    self["hit_lane"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hit_lane.json"), "hash")
 
-    self.assets["scoretxt"] = assetManager.getImage("score")
+    self["scoretxt"] = assetManager.getImage("score_text")
 
     local img = assetManager.getImage("player")
-    self.assets["player"] = {}
-    self.assets["player"].img = img
-    self.assets["player"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "player.json"), "hash")
+    self["player"] = {}
+    self["player"].img = img
+    self["player"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "player.json"), "hash")
     img = nil
 
-    self.assets["glow"] = assetManager.getImage("glow")
-    self.assets["saw"] = assetManager.getImage("saw")
-    --self.assets["hit"] = love.graphics.newImage(path .. "hitter.png")
+    self["glow"] = assetManager.getImage("glow")
+    self["saw"] = assetManager.getImage("saw")
+    --self["hit"] = love.graphics.newImage(path .. "hitter.png")
 
     self.showGameOver = false
 
-    self.assets["particles"] = {}
+    self["particles"] = {}
     local img = assetManager.getImage("particles")
-    self.assets["particles"].img = img
-    self.assets["particles"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "particles.json"), "array")
+    self["particles"].img = img
+    self["particles"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "particles.json"), "array")
 
-    self.assets["hit"] = {}
+    self["hit"] = {}
     local img = assetManager.getImage("hitter")
-    self.assets["hit"].img = img
-    self.assets["hit"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hitter.json"), "array")
+    self["hit"].img = img
+    self["hit"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "hitter.json"), "array")
     img = nil
 
     local img = assetManager.getImage("judments")
-    self.assets["judments"] = {}
-    self.assets["judments"].img = img
-    self.assets["judments"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "judments.json"), "hash")
+    self["judments"] = {}
+    self["judments"].img = img
+    self["judments"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "judments.json"), "hash")
     img = nil
 
     local img = assetManager.getImage("numbers")
-    self.assets["numbers"] = {}
-    self.assets["numbers"].img = img
-    self.assets["numbers"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "numbers.json"), "hash")
+    self["numbers"] = {}
+    self["numbers"].img = img
+    self["numbers"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "numbers.json"), "hash")
     img = nil
-    self.assets["heart"] = assetManager.getImage("heart")
+    self["heart"] = assetManager.getImage("heart")
 
-    self.assets.sounds = {}
-    self.assets.sounds["hit"] = assetManager.getAudio("sfx_hit")
-    self.assets.sounds["jump"] = assetManager.getAudio("sfx_jump")
-    self.assets["gradient"] = assetManager.getImage("gradient")
-
-
-    for key, value in pairs(self.assets) do
-        if key ~= "sounds" then
-            if type(value) == "table" then
-                value.img:setFilter("nearest", "nearest")
-            else
-                value:setFilter("nearest", "nearest")
-            end
-        end
-    end
+    self.sounds = {}
+    self.sounds["hit"] = assetManager.getAudio("sfx_hit")
+    self.sounds["jump"] = assetManager.getAudio("sfx_jump")
+    self["gradient"] = assetManager.getImage("gradient")
 
     self.songCompleted = false
 
-    self.dithbg = DitherManager.getBaked("8x8-56")
-    self.dithalmost = DitherManager.getBaked("8x8-61")
+    self.dithbg = ditherManager.getBaked("8x8-56")
+    self.dithalmost = ditherManager.getBaked("8x8-61")
     self.dithbg:setFilter("nearest", "nearest")
 
     self.gameLost = false
@@ -349,7 +336,7 @@ function PlayState:enter()
     self.notes = {}
     self.combo = 0
 
-    self.comboRender = ComboCounter:new(self.assets["numbers"], shove.getViewportWidth() * 0.5, shove.getViewportHeight() * 0.5)
+    self.comboRender = ComboCounter:new(self["numbers"], shove.getViewportWidth() * 0.5, shove.getViewportHeight() * 0.5)
     self.comboRender.scale = 2
 
     self.pressedKeys = { false, false }
@@ -420,15 +407,15 @@ function PlayState:enter()
     self.scoreFont = fontcache.getFont("monogram", 100)
 
     self.song:loadFromJson(PlayState.songName)
-    self.song:loadAudio("msc_" .. PlayState.songName)
+    self.song:loadAudio(assetManager.getAudio("msc_" .. PlayState.songName))
     self.song.source:setVolume(1)
     Conductor.songPos = 0
 
     Conductor.bpm = self.song.bpm
 
     Player:init(self.field.x, (self.field.y + self.field.spacing - 64))
-    Player.img = self.assets["player"].img
-    Player.quads = self.assets["player"].quads
+    Player.img = self["player"].img
+    Player.quads = self["player"].quads
     Player.state = "idle"
     Player.scale = 4
 
@@ -447,15 +434,15 @@ function PlayState:draw()
     local scale = 6
 
     love.graphics.draw(
-        self.assets["hit_lane"].img,
-        self.assets["hit_lane"].quads[self.pressedKeys[1] and "press" or "idle"],
+        self["hit_lane"].img,
+        self["hit_lane"].quads[self.pressedKeys[1] and "press" or "idle"],
         self.field.x, self.field.y - self.field.spacing, 0,
         scale, scale * 0.67, 10, 10
     )
 
     love.graphics.draw(
-        self.assets["hit_lane"].img,
-        self.assets["hit_lane"].quads[self.pressedKeys[2] and "press" or "idle"],
+        self["hit_lane"].img,
+        self["hit_lane"].quads[self.pressedKeys[2] and "press" or "idle"],
         self.field.x, self.field.y + self.field.spacing, 0,
         scale, scale * 0.35, 10, 10
     )
@@ -471,11 +458,11 @@ function PlayState:draw()
 
     for index, note in ipairs(self.notes) do
         if note.x < shove.getViewportWidth() and not note.wasHit then
-            love.graphics.draw(self.assets["glow"], note.x, note.y, 0, 3.5, 3.5, self.assets["glow"]:getWidth() / 2, self.assets["glow"]:getHeight() / 2)
+            love.graphics.draw(self["glow"], note.x, note.y, 0, 3.5, 3.5, self["glow"]:getWidth() / 2, self["glow"]:getHeight() / 2)
             if note.type == "saw" then
-                love.graphics.draw(self.assets["saw"], note.x, note.y, note.angle, 3, 3, self.assets["saw"]:getWidth() / 2, self.assets["saw"]:getHeight() / 2)
+                love.graphics.draw(self["saw"], note.x, note.y, note.angle, 3, 3, self["saw"]:getWidth() / 2, self["saw"]:getHeight() / 2)
             else
-                --love.graphics.draw(self.assets["hit"], note.x, note.y, 0, 3, 3, self.assets["hit"]:getWidth() / 2, self.assets["hit"]:getHeight() / 2)
+                --love.graphics.draw(self["hit"], note.x, note.y, 0, 3, 3, self["hit"]:getWidth() / 2, self["hit"]:getHeight() / 2)
                 note:draw()
             end
         end
@@ -486,8 +473,8 @@ function PlayState:draw()
     love.graphics.setColor(1, 1, 1, 1)
     for _, obj in ipairs(self.objects) do
         if obj.type ~= "judment" then
-            local _, _, qw, qh = self.assets["particles"].quads[1]:getViewport()
-            love.graphics.draw(self.assets["particles"].img, self.assets["particles"].quads[obj.frame], obj.x, obj.y, 0, obj.scale, obj.scale, qw * 0.5, qh * 0.5)
+            local _, _, qw, qh = self["particles"].quads[1]:getViewport()
+            love.graphics.draw(self["particles"].img, self["particles"].quads[obj.frame], obj.x, obj.y, 0, obj.scale, obj.scale, qw * 0.5, qh * 0.5)
         end
         if not obj.destroy and obj.draw then
             obj:draw()
@@ -499,7 +486,7 @@ function PlayState:draw()
     love.graphics.setColor(colors.fg)
     love.graphics.print(string.format("%06d", self.score), self.scoreFont, 300, 48)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.assets["scoretxt"], 10, 0, 0, 3, 3)
+    love.graphics.draw(self["scoretxt"], 10, 0, 0, 3, 3)
 
     love.graphics.setColor(colors.fg)
     if not self.beginPlay then
@@ -517,11 +504,11 @@ function PlayState:draw()
 
     love.graphics.rectangle("fill", 70, shove.getViewportHeight() - 70, math.floor(468 * (self.playerHealth / self.playerHealthMax)), 128, 16, 16)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.assets["heart"],
+    love.graphics.draw(self["heart"],
         64, shove.getViewportHeight() - 78,
         math.rad(self.angleHeart),
         self.heartScale, self.heartScale,
-        self.assets["heart"]:getWidth() * 0.5, self.assets["heart"]:getHeight() * 0.5
+        self["heart"]:getWidth() * 0.5, self["heart"]:getHeight() * 0.5
     )
 
     if self.showRating then
@@ -561,14 +548,14 @@ function PlayState:update(elapsed)
             end
 
             if obj.type ~= "judment" then
-                if obj.frame < #self.assets["particles"].quads then
+                if obj.frame < #self["particles"].quads then
                     obj.timer = obj.timer + elapsed
 
                     if obj.timer > 1 / 24 then
                         obj.timer = 0
                         obj.frame = obj.frame + 1
 
-                        if obj.frame > #self.assets["particles"].quads then
+                        if obj.frame > #self["particles"].quads then
                             table.remove(self.objects, _)
                         end
                     end
@@ -705,9 +692,9 @@ function PlayState:keypressed(k)
         end
         if k == "space" then
             if not Player.isJumping then
-                self.assets.sounds["jump"]:setPitch(love.math.random(65, 106) / 100)
-                self.assets.sounds["jump"]:setVolume(0.45)
-                self.assets.sounds["jump"]:play()
+                self.sounds["jump"]:setPitch(love.math.random(65, 106) / 100)
+                self.sounds["jump"]:setVolume(0.45)
+                self.sounds["jump"]:play()
             end
             Player:jump(Conductor)
         end
@@ -761,8 +748,8 @@ end
 
 function PlayState:onPlayerHit()
     shakeScreen(self, 0.25, 25, 1.7)
-    self.assets.sounds["hit"]:setPitch(love.math.random(74, 125) / 100)
-    self.assets.sounds["hit"]:play()
+    self.sounds["hit"]:setPitch(love.math.random(74, 125) / 100)
+    self.sounds["hit"]:play()
 end
 
 function PlayState:leave()

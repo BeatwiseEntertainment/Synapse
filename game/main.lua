@@ -42,6 +42,16 @@ function love.initialize()
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
+
+    -- temp hack --
+    ditherManager = require 'source.game.Props.DitherManager'
+
+    -- baking dither --
+    for i = 1, 63, 5 do
+        ditherManager.create("8x8-" .. i, "8x8", i / 63)
+        print("[ENGINE] : baking dither | " .. "8x8-" .. i)
+    end
+
     gameSave = save.new("game")
 
     gameSave.save = {
