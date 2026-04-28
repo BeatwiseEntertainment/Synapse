@@ -10,7 +10,7 @@ local colors = {
     bg = { lume.color("#0e0421") }
 }
 function SongSelectionState:enter()
-    local path = "assets/images/game/"
+    local path = "assets/images/"
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
@@ -19,9 +19,8 @@ function SongSelectionState:enter()
     self["cool_disc"] = love.graphics.newImage(path .. "cool_disc.png")
     self["gradient"] = love.graphics.newImage(path .. "gradient_down.png")
     self["robozito"] = {}
-    local img = love.graphics.newImage(path .. "robozito.png")
     self["robozito"].img = assetManager.getImage("dance_robot")
-    self["robozito"].quads = love.graphics.getQuads(img, path .. "robozito.json", "array")
+    self["robozito"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "dance_robot.json"), "array")
 
     self.sounds = {}
 

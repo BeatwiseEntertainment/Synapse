@@ -1,5 +1,6 @@
 {
     "Lua.workspace.library": [
         "${addons}/love2d/module/library"
-    ]
+    ],
+    "git.autofetch": true,
 }
