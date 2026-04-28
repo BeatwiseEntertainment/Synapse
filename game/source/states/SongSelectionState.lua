@@ -20,15 +20,15 @@ function SongSelectionState:enter()
     self["gradient"] = love.graphics.newImage(path .. "gradient_down.png")
     self["robozito"] = {}
     self["robozito"].img = assetManager.getImage("dance_robot")
-    self["robozito"].quads = love.graphics.getQuads(img, love.filesystem.read(path .. "dance_robot.json"), "array")
+    self["robozito"].quads = love.graphics.getQuads(self["robozito"].img, love.filesystem.read(path .. "dance_robot.json"), "array")
 
     self.sounds = {}
 
     self.vol = 0
     self.sounds["select"] = assetManager.getAudio("sfx_song_select")
-    self.sounds["cry"] = assetManager.getAudio("sfx_cry")
-    self.sounds["nulctrl"] = assetManager.getAudio("sfx_nulctrl")
-    self.sounds["tutorial"] = assetManager.getAudio("sfx_tutorial")
+    self.sounds["cry"] = assetManager.getAudio("msc_cry")
+    self.sounds["nulctrl"] = assetManager.getAudio("msc_nulctrl")
+    self.sounds["tutorial"] = assetManager.getAudio("msc_tutorial")
 
     love.graphics.setBackgroundColor(colors.bg)
 

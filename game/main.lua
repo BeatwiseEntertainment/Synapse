@@ -48,7 +48,8 @@ function love.initialize()
         user = {
             client = "",
             playlist = {},
-            editors = {}
+            editors = {},
+            leaderboard = {}
         },
         settings = {}
     }
