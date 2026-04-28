@@ -84,7 +84,7 @@ end
 
 function RatingSubstate:update(elapsed)
     self.discAngle = self.discAngle - 20 * elapsed
-    Shake:update(elapsed)
+    --Shake:update(elapsed)
 end
 
 function RatingSubstate:transitionate()
