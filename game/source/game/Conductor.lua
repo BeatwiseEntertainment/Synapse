@@ -21,7 +21,7 @@ local function updateCrochets()
     Conductor.stepCrochet = Conductor.crochet / 4
 end
 
-function Conductor:update(dt)
+function Conductor.update(dt)
     local oldStep = Conductor.curStep
 
     -- no mapped changes for bpm just yet, ain't nobody got time for that
@@ -31,17 +31,17 @@ function Conductor:update(dt)
     updateCrochets()
 
     if oldStep ~= Conductor.curStep and Conductor.curStep > 0 then
-        Conductor:stepHit()
+        Conductor.stepHit()
     end
 end
 
-function Conductor:stepHit()
+function Conductor.stepHit()
     if Conductor.curStep % 4 == 0 then
-        Conductor:beatHit()
+        Conductor.beatHit()
     end
 end
 
-function Conductor:beatHit()
+function Conductor.beatHit()
     -- gibe buissy pleez
 end
 

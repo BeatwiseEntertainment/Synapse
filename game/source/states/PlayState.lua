@@ -77,10 +77,11 @@ local function generateSong(self)
         elseif note.lane == 1 then
             laneID = 2
             isSaw = false
-        elseif note.lane == 2 then
+        elseif note.lane == 2 and love.system.getDeviceType() == "desktop" then
             laneID = 2
             isSaw = true
         end
+
 
         local n = Note:new(
             note.time + Conductor.offset,

@@ -180,20 +180,6 @@ function AssetManager.getFont(key, size)
         AssetManager.assets[namespace].fonts.pool[namedata] = love.graphics.newFont(AssetManager.assets[namespace].fonts.paths[key], size)
         return AssetManager.assets[namespace].fonts.pool[namedata]
     end
-
-    --for p = 1, #FontCache.paths, 1 do
-    --    local path = FontCache.paths[p]:match("[^/]+$"):gsub(".ttf", "")
-    --    if path == name then
-    --        local fontdata = name .. "-" .. size
-    --        if FontCache.pool[fontdata] then
-    --            return FontCache.pool[fontdata]
-    --        else
-    --            FontCache.pool[fontdata] = love.graphics.newFont(FontCache.paths[p], size)
-    --            return FontCache.pool[fontdata]
-    --        end
-    --    end
-    --end
-    --error(string.format("[ERROR] : The font %s is not on the path", _name))
 end
 
 function AssetManager.release()

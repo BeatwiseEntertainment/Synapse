@@ -1,4 +1,4 @@
-require 'source.system.ErrHandler'
+--require 'source.system.ErrHandler'
 require 'source.system.Run'
 local gitstuff = require 'source.system.GitStuff' -- super important stuff --
 assetManager = require 'source.system.AssetManager'
@@ -10,8 +10,6 @@ languageService = {}
 languageRaw = {}
 
 local function createUserFolders()
-    --love.filesystem.createDirectory("user/")
-
     local filelist = {
         root = "user",
         child = {
@@ -64,13 +62,6 @@ function love.initialize()
         settings = {}
     }
 
-    local configAPI = json.decode(love.filesystem.read("API.json"))
-    discordrpc.initialize(configAPI.discord.appid, false)
-
-    gameSave:initialize()
-    --love.keyboard.setTextInput(true)
-    love.keyboard.setKeyRepeat(true)
-
     registers = {
         statesName = {},
         isOnline = false,
@@ -78,8 +69,18 @@ function love.initialize()
         devWindowContent = function() return end,
     }
 
-    local code, body = https.request("https://google.com")
-    registers.isOnline = code == 200
+    local configAPI = json.decode(love.filesystem.read("API.json"))
+    if love.system.getDeviceType() == "desktop" then
+        discordrpc.initialize(configAPI.discord.appid, false)
+
+        local code, body = https.request("https://google.com")
+        registers.isOnline = code == 200
+    end
+
+    gameSave:initialize()
+    --love.keyboard.setTextInput(true)
+    love.keyboard.setKeyRepeat(true)
+
 
     registers.devWindowContent = function()
         Slab.BeginWindow("menuNightDev", { Title = "Development" })
@@ -113,22 +114,24 @@ function love.initialize()
     --love.filesystem.createDirectory("mods")
 
     if love.FEATURE_FLAGS.debug then
-        discordrpc.ready = function(userId, username, discriminator, avatar)
-            local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightWhite}: ready (%s, %s, %s, %s){reset}", userId, username, discriminator, avatar)
-            io.printf(str)
+        if love.system.getDeviceType() == "desktop" then
+            discordrpc.ready = function(userId, username, discriminator, avatar)
+                local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightWhite}: ready (%s, %s, %s, %s){reset}", userId, username, discriminator, avatar)
+                io.printf(str)
 
-            presence.largeImageKey = "placeholder"
-            presence()
-        end
+                presence.largeImageKey = "placeholder"
+                presence()
+            end
 
-        discordrpc.disconnected = function(errorCode, message)
-            local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightRed}: disconnected (%s, %s){reset}", errorCode, message)
-            io.printf(str)
-        end
+            discordrpc.disconnected = function(errorCode, message)
+                local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightRed}: disconnected (%s, %s){reset}", errorCode, message)
+                io.printf(str)
+            end
 
-        discordrpc.errored = function(errorCode, message)
-            local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightRed}: Error (%s, %s){reset}", errorCode, message)
-            io.printf(str)
+            discordrpc.errored = function(errorCode, message)
+                local str = string.format("{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightRed}: Error (%s, %s){reset}", errorCode, message)
+                io.printf(str)
+            end
         end
     end
 
@@ -136,26 +139,30 @@ function love.initialize()
 
     gamestate.registerEvents()
 
-    assetManager.targetState = MenuState
+    assetManager.targetState = DebugState
     assetManager.init(require('load'))
 end
 
 function love.update(elapsed)
-    presenceUpdateTimer = presenceUpdateTimer + elapsed
+    if love.system.getDeviceType() == "desktop" then
+        presenceUpdateTimer = presenceUpdateTimer + elapsed
 
-    if presenceUpdateTimer > 2 and registers.isOnline then
-        --discordrpc.updatePresence()
-        presence()
-        --local str = "{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightBlue}: updated presence{reset}"
-        --io.printf(str)
-        presenceUpdateTimer = 0
-    end
-    if registers.isOnline then
-        discordrpc.runCallbacks()
+        if presenceUpdateTimer > 2 and registers.isOnline then
+            --discordrpc.updatePresence()
+            presence()
+            --local str = "{bgBrightBlue}{brightWhite}[Love.DiscordRPC]{reset}{brightBlue}: updated presence{reset}"
+            --io.printf(str)
+            presenceUpdateTimer = 0
+        end
+        if registers.isOnline then
+            discordrpc.runCallbacks()
+        end
     end
 end
 
 function love.quit()
     assetManager.release()
-    discordrpc.shutdown()
+    if love.system.getDeviceType() == "desktop" then
+        discordrpc.shutdown()
+    end
 end

@@ -5,9 +5,12 @@ return function()
     baton = require 'source.system.utils.Baton'
     Slab = require 'source.system.utils.Slab'
     moonshine = require 'source.system.Moonshine'
-    discordrpc = require 'source.system.libraries.discordRPC'
     loveframes = require 'source.system.utils.Loveframes'
     lume = require 'source.system.libraries.lume'
-    https = require 'https'
+    multouch = require 'source.system.libraries.multouch'
+    if love.system.getDeviceType() == "desktop" then
+        discordrpc = require 'source.system.libraries.discordRPC'
+        https = require 'https'
+    end
     --require 'source.system.libraries.autobatch'
 end

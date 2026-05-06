@@ -43,6 +43,7 @@ return function()
     newImage("gradient_down", "gradient_down.png")
 
     newAudio("msc_future_base", "music/future_base.ogg", assetManager.AudioMode.STATIC)
+    newAudio("msc_iloveyou", "music/iloveyou.ogg", assetManager.AudioMode.STATIC)
     newAudio("msc_tutorial", "music/tutorial.ogg", assetManager.AudioMode.STATIC)
     newAudio("msc_cry", "music/cry.ogg", assetManager.AudioMode.STATIC)
     newAudio("msc_nulctrl", "music/nulctrl.ogg", assetManager.AudioMode.STATIC)

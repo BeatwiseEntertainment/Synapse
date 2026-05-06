@@ -105,7 +105,17 @@ function love.graphics.getQuadsFromAtlas(atlas, splitX, splitY)
     return image, quads
 end
 
-function love.graphics.newGradient(dir, ...)
+---@alias love.GradientDirection
+---| "vertical"
+---| "horizontal"
+
+---@alias love.ColorTable table<number>
+
+---Create a new gradient object
+---@param dir love.GradientDirection
+---@param colors table<love.ColorTable>
+---@return love.Mesh
+function love.graphics.newGradient(dir, colors)
     -- Check for direction
     local isHorizontal = true
     if dir == "vertical" then
@@ -115,7 +125,7 @@ function love.graphics.newGradient(dir, ...)
     end
 
     -- Check for colors
-    local colorLen = select("#", ...)
+    local colorLen = #colors
     if colorLen < 2 then
         error("color list is less than two", 2)
     end
@@ -124,7 +134,7 @@ function love.graphics.newGradient(dir, ...)
     local meshData = {}
     if isHorizontal then
         for i = 1, colorLen do
-            local color = select(i, ...)
+            local color = colors[i]
             local x = (i - 1) / (colorLen - 1)
 
             meshData[#meshData + 1] = { x, 1, x, 1, color[1], color[2], color[3], color[4] or 1 }
@@ -132,7 +142,7 @@ function love.graphics.newGradient(dir, ...)
         end
     else
         for i = 1, colorLen do
-            local color = select(i, ...)
+            local color = colors[i]
             local y = (i - 1) / (colorLen - 1)
 
             meshData[#meshData + 1] = { 0, y, 0, y, color[1], color[2], color[3], color[4] or 1 }

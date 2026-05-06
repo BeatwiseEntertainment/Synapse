@@ -34,7 +34,6 @@ function MenuState:enter()
         end
     end
 
-
     Conductor.bpm = 90.75
     Conductor.songPos = 0
 

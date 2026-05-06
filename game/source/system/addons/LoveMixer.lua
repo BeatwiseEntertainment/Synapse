@@ -1,5 +1,17 @@
 love.mixer = {}
 
+local function createGetSet(target, field)
+    local upper = field:sub(1, 1):upper() .. field:sub(2)
+
+    target["get" .. upper] = function(self)
+        return self[field]
+    end
+
+    target["set" .. upper] = function(self, value)
+        self[field] = value
+    end
+end
+
 ---@type love.MixerPlaybackOptions
 love.MixerPlaybackOptions = {
     loop = false,
@@ -7,6 +19,12 @@ love.MixerPlaybackOptions = {
     volume = 1,
 }
 
+---@class love.MixerChannel
+---@field volume number
+---@field pitch number
+---@field loop boolean
+---@field _tags record<string>
+---@field _sources record<love.Source>
 local MixerChannel = {}
 MixerChannel.__index = MixerChannel
 
@@ -20,8 +38,12 @@ function MixerChannel.new(maxSourceCount)
     return self
 end
 
-function MixerChannel:_play() end
-
+---@class love.Mixer
+---@field _sourceAssets  record<string, love.Source>
+---@field _channels record<string, love.MixerChannel>
+---@field _maxSounds number
+---@field _sourcesCount number
+---@field _channelsCount number
 local Mixer = {}
 Mixer.__index = Mixer
 
@@ -41,6 +63,8 @@ function Mixer.new(maxSourceCount)
     self.masterPitch = 1 ---@type float
     return self
 end
+
+-----------------------------------------------------------------------------------
 
 ---Add a new source on the mixer rack
 ---@param tag string
@@ -104,6 +128,13 @@ function Mixer:playChannel(channelName, tag, settings)
     sound:play()
 end
 
+---Set the channel volume
+---@param name string
+---@param vol number
+function Mixer:setChannelVolume(name, vol)
+
+end
+
 ---update all values of the mixer --
 function Mixer:update()
     for channelName, channel in pairs(self._channels) do
@@ -117,6 +148,36 @@ function Mixer:update()
             end
         end
     end
+end
+
+--createGetSet(self, )
+
+function Mixer:getChannelVolume(name)
+    if not self._channels[name] then return end
+
+    local channel = self._channels[name]
+    return channel.volume
+end
+
+function Mixer:setChannelVolume(name, volume)
+    if not self._channels[name] then return end
+
+    local channel = self._channels[name]
+    channel.volume = volume
+end
+
+function Mixer:getChannelPitch(name)
+    if not self._channels[name] then return end
+
+    local channel = self._channels[name]
+    return channel.pitch
+end
+
+function Mixer:setChannelPitch(name, pitch)
+    if not self._channels[name] then return end
+
+    local channel = self._channels[name]
+    channel.pitch = pitch
 end
 
 function love.mixer.newMixer()
