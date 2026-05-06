@@ -80,8 +80,24 @@ function love.graphics.getQuads(image, jsonData, mode)
     return quads
 end
 
+---comment
+---@param atlas string | love.Image
+---@param splitX number
+---@param splitY number
+---@return unknown
+---@return table
 function love.graphics.getQuadsFromAtlas(atlas, splitX, splitY)
-    local image = love.graphics.newImage(atlas)
+    local image
+
+    --atlas:typeOf("")
+    --print(atlas:type())
+
+    if type(atlas) == "string" then
+        image = love.graphics.newImage(atlas)
+    elseif atlas:type() == "Image" then
+        image = atlas
+    end
+
     splitX, splitY = splitX or image:getWidth(), splitY or image:getHeight()
     local quads = {}
 

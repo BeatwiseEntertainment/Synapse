@@ -155,15 +155,25 @@ end
 -- get functions ---
 ---------------------------------------------------------------------
 
+---Get a sprite from the asset manager
+---@param key string
+---@return love.Drawable
 function AssetManager.getImage(key)
     local namespace, assetKey = getNamespace(key)
     return AssetManager.assets[namespace].images.static[assetKey]
 end
 
-function AssetManager.getAudio(key, mode)
+---Get a audio from the asset manager
+---@param key string
+---@return love.Source
+function AssetManager.getAudio(key)
     local namespace, assetKey = getNamespace(key)
-    mode = mode or AssetManager.AudioMode.STATIC
-    return AssetManager.assets[namespace].audios[mode][assetKey]
+
+    if AssetManager.assets[namespace].audios[AssetManager.AudioMode.STATIC][assetKey] then
+        return AssetManager.assets[namespace].audios[AssetManager.AudioMode.STATIC][assetKey]
+    elseif AssetManager.assets[namespace].audios[AssetManager.AudioMode.STREAM][assetKey] then
+        return AssetManager.assets[namespace].audios[AssetManager.AudioMode.STREAM][assetKey]
+    end
 end
 
 function AssetManager.getFont(key, size)

@@ -1,0 +1,6 @@
+[0.0.1 - alphaJam]
+    - Release canditate for the gamejame B1T-Jam
+
+[0.0.1 - alpha anniversary]
+    - Added Mobile suppport (still in test)
+    

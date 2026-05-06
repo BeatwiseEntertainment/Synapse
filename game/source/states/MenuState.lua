@@ -49,9 +49,39 @@ function MenuState:enter()
     self.currentOption = 1
     self.startY = shove.getViewportHeight() * 0.5 - 100
     self.options = {
-        "play",
-        "exit"
+        {
+            text = "play",
+            action = function()
+                self.song:stop()
+                gamestate.switch(SongSelectionState)
+            end
+        },
+        {
+            text = "exit",
+            action = function()
+                love.event.quit()
+            end
+        }
     }
+
+    -- Initialize touch areas for options
+    self.touchAreas = {}
+    local spacing = 24
+    local padding = 20
+    for idx, option in ipairs(self.options) do
+        local posY = self.startY + (self.fontOptions:getHeight() + spacing) * idx
+        local textWidth = self.fontOptions:getWidth(option.text)
+        local textHeight = self.fontOptions:getHeight()
+        local rectWidth = textWidth + 16
+        local rectX = shove.getViewportWidth() * 0.5 - rectWidth / 2
+
+        self.touchAreas[idx] = {
+            x = rectX - padding,
+            y = posY + 8 - padding,
+            w = rectWidth + padding * 2,
+            h = textHeight + 8 + padding * 2
+        }
+    end
 end
 
 function MenuState:draw()
@@ -65,24 +95,24 @@ function MenuState:draw()
         self["logo"]:getHeight() * 0.5
     )
 
-    --love.graphics.rectangle("fill", shove.getViewportWidth() * 0.5 - 512 * 0.5, shove.getViewportHeight() * 0.5, 512, 200, 16, 16)
-
     local spacing = 24
     for idx, option in ipairs(self.options) do
         local posY = self.startY + (self.fontOptions:getHeight() + spacing) * idx
         if self.currentOption == idx then
             love.graphics.setColor(colors.fg)
-            love.graphics.rectangle("fill", shove.getViewportWidth() * 0.5 - (self.fontOptions:getWidth(option) + 16) / 2, posY + 8, self.fontOptions:getWidth(option) + 16, self.fontOptions:getHeight() + 8)
+            love.graphics.rectangle("fill", shove.getViewportWidth() * 0.5 - (self.fontOptions:getWidth(option.text) + 16) / 2, posY + 8, self.fontOptions:getWidth(option.text) + 16, self.fontOptions:getHeight() + 8)
             love.graphics.setColor(colors.bg)
         else
             love.graphics.setColor(colors.fg)
         end
-        love.graphics.printf(option, self.fontOptions, 0, posY, shove.getViewportWidth(), "center")
-
-        love.graphics.setColor(colors.fg)
-        love.graphics.printf("Created for B1T Jam 2026 | NimbusEclipse and Rato.dev (arts and thingies)", self.fontCreds, 0, shove.getViewportHeight() - (self.fontCreds:getHeight() + 8), shove.getViewportWidth(), "right")
-        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.printf(option.text, self.fontOptions, 0, posY, shove.getViewportWidth(), "center")
     end
+
+    local credits = "BeatWiseEntertainment 2026 [SPECIAL EDITION FOR ThSun]"
+
+    love.graphics.setColor(colors.fg)
+    love.graphics.printf(credits, self.fontCreds, 0, shove.getViewportHeight() - (self.fontCreds:getHeight() + 8), shove.getViewportWidth(), "right")
+    love.graphics.setColor(1, 1, 1, 1)
     self.camera:detach()
 end
 
@@ -121,16 +151,30 @@ function MenuState:keypressed(k)
         end
     elseif k == "return" then
         local choose = self.options[self.currentOption]
-        switch(choose, {
-            ["play"] = function()
-                self.song:stop()
-                gamestate.switch(SongSelectionState)
-            end,
-            ["exit"] = function()
-                love.event.quit()
-            end
-        })
+        choose.action()
     end
+end
+
+function MenuState:touchpressed(id, x, y, dx, dy, pressure)
+    if not self.canPlay then return end
+
+    local inside, px, py = shove.screenToViewport(x, y)
+
+    for idx, area in ipairs(self.touchAreas) do
+        if collision.pointRect({ x = px, y = py }, area) then
+            local choose = self.options[idx]
+            choose.action()
+            return
+        end
+    end
+end
+
+function MenuState:touchreleased(id, x, y, dx, dy, pressure)
+    -- Touch released, no action needed
+end
+
+function MenuState:leave()
+    love.audio.stop()
 end
 
 return MenuState

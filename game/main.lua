@@ -139,7 +139,7 @@ function love.initialize()
 
     gamestate.registerEvents()
 
-    assetManager.targetState = DebugState
+    assetManager.targetState = MenuState
     assetManager.init(require('load'))
 end
 

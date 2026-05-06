@@ -5,46 +5,46 @@ local colors = {
     bg = { lume.color("#0e0421") }
 }
 
+local PatchButton = require 'source.game.Props.PatchButton'
+
 function DebugState:enter()
     self.areas = {
-        leftTouchArea = {
+        ["leftTouchArea"] = {
             x = 0,
             y = 0,
             w = shove.getViewportWidth() * 0.5,
-            h = shove.getViewportHeight(),
+            h = shove.getViewportHeight() - 180,
             active = false,
             color = { lume.color("#dc3ff33") }
         },
-        rightTouchArea = {
+        ["rightTouchArea"] = {
             x = shove.getViewportWidth() * 0.5,
             y = 0,
             w = shove.getViewportWidth() * 0.5,
-            h = shove.getViewportHeight(),
+            h = shove.getViewportHeight() - 180,
             active = false,
             color = { lume.color("#D5CF0D64") }
+        },
+        ["middleTouchArea"] = {
+            x = 0,
+            y = shove.getViewportHeight() - 180,
+            w = shove.getViewportWidth(),
+            h = shove.getViewportHeight() - 180,
+            active = false,
+            color = { lume.color("#ffffff") }
         }
     }
+
+    self.btn = PatchButton:new(assetManager.getImage("frame"), 90, 90, 6)
+    self.btn.text = "teste"
 end
 
 function DebugState:draw()
-    love.graphics.print("Current touches on screen: " .. #love.touch.getTouches(), 30, 30)
-
-    --love.graphics.rectangle(self.testButton.active and "fill" or "line", self.testButton.x, self.testButton.y, self.testButton.w, self.testButton.h)
-    for key, rect in pairs(self.areas) do
-        love.graphics.setColor(rect.color)
-        love.graphics.rectangle(rect.active and "fill" or "line", rect.x, rect.y, rect.w, rect.h)
-        love.graphics.setColor(1, 1, 1, 1)
-    end
-
-    for i, id in ipairs(love.touch.getTouches()) do
-        local tx, ty       = love.touch.getPosition(id)
-        local inside, x, y = shove.screenToViewport(tx, ty)
-        love.graphics.circle("fill", x, y, 20)
-    end
+    self.btn:draw()
 end
 
 function DebugState:update(elapsed)
-
+    self.btn:update(elapsed)
 end
 
 function DebugState:touchpressed(id, x, y, dx, dy, pressure)

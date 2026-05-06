@@ -227,7 +227,6 @@ function SongSelectionState_old:update(elapsed)
     end
 
     local beatProgress = (Conductor.songPos % Conductor.crochet) / Conductor.crochet
-
     self.robotFrame = math.floor(beatProgress * #self["robozito"].quads) + 1
 
     self.capeScale = math.lerp(self.capeScale, 4, 0.057)

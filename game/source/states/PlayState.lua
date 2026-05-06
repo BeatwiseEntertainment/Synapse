@@ -333,6 +333,33 @@ function PlayState:enter()
     self.showRating = false
     self.finished = false
 
+    self.touchAreas = {
+        ["leftTouchArea"] = {
+            x = 0,
+            y = 0,
+            w = shove.getViewportWidth() * 0.5,
+            h = shove.getViewportHeight() - 180,
+            active = false,
+            color = { lume.color("#dc3ff33") }
+        },
+        ["rightTouchArea"] = {
+            x = shove.getViewportWidth() * 0.5,
+            y = 0,
+            w = shove.getViewportWidth() * 0.5,
+            h = shove.getViewportHeight() - 180,
+            active = false,
+            color = { lume.color("#D5CF0D64") }
+        },
+        ["middleTouchArea"] = {
+            x = 0,
+            y = shove.getViewportHeight() - 180,
+            w = shove.getViewportWidth(),
+            h = shove.getViewportHeight() - 180,
+            active = false,
+            color = { lume.color("#ffffff") }
+        }
+    }
+
     --self.zoom = 1
     self.notes = {}
     self.combo = 0
@@ -716,6 +743,32 @@ function PlayState:keyreleased(k)
         if k == "k" then
             self.pressedKeys[2] = false
         end
+    end
+end
+
+function PlayState:touchpressed(id, x, y, dx, dy, pressure)
+    local inside, px, py = shove.screenToViewport(x, y)
+    if collision.pointRect({ x = px, y = py }, self.touchAreas["rightTouchArea"]) then
+        self.pressedKeys[1] = true
+        processHit(self, 1)
+    end
+    if collision.pointRect({ x = px, y = py }, self.touchAreas["leftTouchArea"]) then
+        self.pressedKeys[2] = true
+        processHit(self, 2)
+    end
+    if collision.pointRect({ x = px, y = py }, self.touchAreas["middleTouchArea"]) then
+        if not Player.isJumping then
+            self.sounds["jump"]:setPitch(love.math.random(65, 106) / 100)
+            self.sounds["jump"]:setVolume(0.25)
+            self.sounds["jump"]:play()
+        end
+        Player:jump(Conductor)
+    end
+end
+
+function PlayState:touchreleased(id, x, y, dx, dy, pressure)
+    for idx, value in ipairs(self.pressedKeys) do
+        self.pressedKeys[i] = false
     end
 end
 
