@@ -1,6 +1,6 @@
-[0.0.1 - alphaJam]
-    - Release canditate for the gamejame B1T-Jam
+[0.0.1 - RC-alphaJam]
+    - Release canditate for the gamejam B1T-Jam
 
 [0.0.1 - alpha anniversary]
     - Added Mobile suppport (still in test)
-    
+    - new song I love you la la la - Tree Palm

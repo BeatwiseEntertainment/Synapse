@@ -736,23 +736,26 @@ function PlayState:keypressed(k)
 end
 
 function PlayState:keyreleased(k)
-    if self.beginPlay and self.notesGenerated then
-        if k == "d" then
-            self.pressedKeys[1] = false
-        end
-        if k == "k" then
-            self.pressedKeys[2] = false
-        end
+    for idx, value in ipairs(self.pressedKeys) do
+        self.pressedKeys[idx] = false
     end
 end
 
 function PlayState:touchpressed(id, x, y, dx, dy, pressure)
     local inside, px, py = shove.screenToViewport(x, y)
-    if collision.pointRect({ x = px, y = py }, self.touchAreas["rightTouchArea"]) then
+
+    if not self.beginPlay and self.notesGenerated then
+        self.beginPlay = true
+        --self.music:play()
+        Conductor.songPos = 0
+        self.song:play()
+    end
+
+    if collision.pointRect({ x = px, y = py }, self.touchAreas["leftTouchArea"]) then
         self.pressedKeys[1] = true
         processHit(self, 1)
     end
-    if collision.pointRect({ x = px, y = py }, self.touchAreas["leftTouchArea"]) then
+    if collision.pointRect({ x = px, y = py }, self.touchAreas["rightTouchArea"]) then
         self.pressedKeys[2] = true
         processHit(self, 2)
     end
@@ -768,7 +771,7 @@ end
 
 function PlayState:touchreleased(id, x, y, dx, dy, pressure)
     for idx, value in ipairs(self.pressedKeys) do
-        self.pressedKeys[i] = false
+        self.pressedKeys[idx] = false
     end
 end
 

@@ -9,6 +9,13 @@ local colors = {
     bg = { lume.color("#0e0421") }
 }
 
+local function newMenuOption(text, action)
+    return {
+        text = text,
+        action = action
+    }
+end
+
 function MenuState:enter()
     self["logo"] = assetManager.getImage("main_logo")
 
@@ -49,19 +56,14 @@ function MenuState:enter()
     self.currentOption = 1
     self.startY = shove.getViewportHeight() * 0.5 - 100
     self.options = {
-        {
-            text = "play",
-            action = function()
-                self.song:stop()
-                gamestate.switch(SongSelectionState)
-            end
-        },
-        {
-            text = "exit",
-            action = function()
-                love.event.quit()
-            end
-        }
+        newMenuOption("Play", function()
+            self.song:stop()
+            gamestate.switch(SongSelectionState)
+        end),
+
+        newMenuOption("Exit", function()
+            love.event.quit()
+        end)
     }
 
     -- Initialize touch areas for options
@@ -108,7 +110,7 @@ function MenuState:draw()
         love.graphics.printf(option.text, self.fontOptions, 0, posY, shove.getViewportWidth(), "center")
     end
 
-    local credits = "BeatWiseEntertainment 2026 [SPECIAL EDITION FOR ThSun]"
+    local credits = "NXStudios 2026 [SPECIAL EDITION FOR ThSun]"
 
     love.graphics.setColor(colors.fg)
     love.graphics.printf(credits, self.fontCreds, 0, shove.getViewportHeight() - (self.fontCreds:getHeight() + 8), shove.getViewportWidth(), "right")

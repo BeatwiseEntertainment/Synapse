@@ -135,6 +135,10 @@ function love.initialize()
         end
     end
 
+    masterMixer = love.mixer.newMixer()
+    masterMixer:addChannel("music")
+    masterMixer:addChannel("sfx")
+
     createUserFolders()
 
     gamestate.registerEvents()
@@ -144,6 +148,8 @@ function love.initialize()
 end
 
 function love.update(elapsed)
+    masterMixer:update()
+
     if love.system.getDeviceType() == "desktop" then
         presenceUpdateTimer = presenceUpdateTimer + elapsed
 

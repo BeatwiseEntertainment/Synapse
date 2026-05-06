@@ -54,7 +54,7 @@ function Mixer.new(maxSourceCount)
     local self = setmetatable({}, Mixer)
     self._sourceAssets = {} ---@type record<string, love.Source>
     self._channels = {} ---@type record<string, love.MixerChannel>
-    self._maxSounds = maxSourceCount ---@type integer
+    self._maxSounds = maxSourceCount or 5 ---@type integer
     self._sourcesCount = 0
     self._channelsCount = 0
 
@@ -72,7 +72,7 @@ end
 function Mixer:addSource(tag, source)
     self._sourcesCount = self._sourcesCount + 1
 
-    if self._sourcesCount > self.maxSounds then
+    if self._sourcesCount > self._maxSounds then
         error("[Love.Mixer] : The mixer reached the max allowed source count. maxSounds = " .. self._maxSounds)
     end
 
@@ -119,7 +119,7 @@ function Mixer:playChannel(channelName, tag, settings)
     local channel = self._channels[channelName]
     local sound = self._sourceAssets[tag]
 
-    channel._sounds[tag] = sound
+    channel._sources[tag] = sound
 
     channel.volume = settings.volume
     channel.pitch = settings.pitch
@@ -128,23 +128,16 @@ function Mixer:playChannel(channelName, tag, settings)
     sound:play()
 end
 
----Set the channel volume
----@param name string
----@param vol number
-function Mixer:setChannelVolume(name, vol)
-
-end
-
 ---update all values of the mixer --
 function Mixer:update()
     for channelName, channel in pairs(self._channels) do
-        for tag, source in pairs(channel._sounds) do
+        for tag, source in pairs(channel._sources) do
             source:setVolume(self.masterVolume * channel.volume)
             source:setPitch(channel.volume)
-            source:setLooping(channelName.loop)
+            source:setLooping(channel.loop)
 
             if source:isPlaying() and not source:isLooping() then
-                table.removeItem(channel._sounds, tag)
+                table.removeItem(channel._sources, tag)
             end
         end
     end

@@ -8,6 +8,7 @@ return function()
     loveframes = require 'source.system.utils.Loveframes'
     lume = require 'source.system.libraries.lume'
     multouch = require 'source.system.libraries.multouch'
+    patchy = require 'source.system.libraries.patchy'
     if love.system.getDeviceType() == "desktop" then
         discordrpc = require 'source.system.libraries.discordRPC'
         https = require 'https'

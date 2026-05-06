@@ -43,6 +43,8 @@ return function()
     newImage("gradient_down", "gradient_down.png")
     newImage("keys", "keyz.png")
     newImage("frame", "frame.png")
+    newImage("difficulty_counter", "difficulty_counter.png")
+    newImage("buttonSelect", "button.png")
 
     local mode = love.system.getDeviceType() == "mobile" and assetManager.AudioMode.STREAM or assetManager.AudioMode.STATIC
 

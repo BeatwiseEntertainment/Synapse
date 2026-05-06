@@ -5,8 +5,6 @@ local colors = {
     bg = { lume.color("#0e0421") }
 }
 
-local PatchButton = require 'source.game.Props.PatchButton'
-
 function DebugState:enter()
     self.areas = {
         ["leftTouchArea"] = {
@@ -34,17 +32,14 @@ function DebugState:enter()
             color = { lume.color("#ffffff") }
         }
     }
-
-    self.btn = PatchButton:new(assetManager.getImage("frame"), 90, 90, 6)
-    self.btn.text = "teste"
 end
 
 function DebugState:draw()
-    self.btn:draw()
+
 end
 
 function DebugState:update(elapsed)
-    self.btn:update(elapsed)
+
 end
 
 function DebugState:touchpressed(id, x, y, dx, dy, pressure)
