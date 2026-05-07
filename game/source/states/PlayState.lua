@@ -598,7 +598,7 @@ function PlayState:update(elapsed)
         end
 
         Conductor.songPos = self.song:getSongPos() * 1000
-        Conductor:update(elapsed)
+        Conductor.update()
 
         self.camera:zoomTo(self.camera.target.zoom)
 
@@ -743,6 +743,10 @@ end
 
 function PlayState:touchpressed(id, x, y, dx, dy, pressure)
     local inside, px, py = shove.screenToViewport(x, y)
+
+    if self.showRating then
+        self.ratingScreen:transitionate()
+    end
 
     if not self.beginPlay and self.notesGenerated then
         self.beginPlay = true
