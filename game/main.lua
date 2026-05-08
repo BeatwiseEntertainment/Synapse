@@ -95,6 +95,8 @@ function love.initialize()
 
     gitstuff() -- still super important --
 
+    love.graphics.setDefaultFilter("nearest", "nearest", 0)
+
     -- autoload states --
     local statePath = "source/states"
     local states = love.filesystem.getDirectoryItems(statePath)

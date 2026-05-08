@@ -102,7 +102,7 @@ function SongSelectionState:enter()
     self.songList = {
         newMusic("Tutorial", "NimbusEclipse", 2, 100, 10, 20, "msc_tutorial"),
         newMusic("Cry", "Sacha Ende", 4, 100, 40, 20, "msc_cry"),
-        newMusic("I love you", "TreePalm", 5, 128, 63, 20, "msc_iloveyou"),
+        newMusic("I love you", "TreePalm", 5, 128, 63, 20, "msc_i_love_you"),
     }
 
     local img = assetManager.getImage("buttonSelect")
@@ -173,7 +173,7 @@ function SongSelectionState:enter()
     }
 
     self.previewSongs.musics["msc_cry"] = assetManager.getAudio("msc_cry")
-    self.previewSongs.musics["msc_iloveyou"] = assetManager.getAudio("msc_iloveyou")
+    self.previewSongs.musics["msc_i_love_you"] = assetManager.getAudio("msc_i_love_you")
     self.previewSongs.musics["msc_tutorial"] = assetManager.getAudio("msc_tutorial")
 
     self.buttons["leftButton"].w = img:getWidth() * buttonScale

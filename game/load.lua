@@ -49,11 +49,10 @@ return function()
     local mode = love.system.getDeviceType() == "mobile" and assetManager.AudioMode.STREAM or assetManager.AudioMode.STATIC
 
     newAudio("msc_future_base", "music/future_base.ogg", mode)
-    newAudio("msc_iloveyou", "music/iloveyou.ogg", mode)
+    newAudio("msc_i_love_you", "music/iloveyou.ogg", mode)
     newAudio("msc_tutorial", "music/tutorial.ogg", mode)
     newAudio("msc_cry", "music/cry.ogg", mode)
     newAudio("msc_nulctrl", "music/nulctrl.ogg", mode)
-    newAudio("msc_tutorial", "music/tutorial.ogg", mode)
     newAudio("sfx_back", "back.ogg", mode)
     newAudio("sfx_jump", "jump.ogg", mode)
     newAudio("sfx_song_select", "song_select.ogg", mode)

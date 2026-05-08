@@ -129,7 +129,7 @@ local function getJudgement(diff)
 end
 
 local function processHit(self, lane)
-    local hitWindow = 120
+    local hitWindow = 128
 
     for _, note in ipairs(self.notes) do
         if note.lane == lane and not note.wasHit then

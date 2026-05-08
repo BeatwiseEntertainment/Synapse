@@ -94,6 +94,11 @@ function LoadingState:update(elapsed)
 end
 
 function LoadingState:leave(elapsed)
+    for key, image in pairs(pool.images.static) do
+        if image.setFilter then
+            image:setFilter("nearest", "nearest")
+        end
+    end
     icon:release()
 end
 

@@ -120,7 +120,7 @@ function love.run()
     shove.setResolution(config.viewportWidth, config.viewportHeight, { fitMethod = "aspect", renderMode = "layer" })
     -- Set up a resizable window
     shove.setWindowMode(config.screenWidth, config.screenHeight,
-        { resizable = config.resizable, vsync = 0, fullscreen = config.fullscreen })
+        { resizable = config.resizable, vsync = 0, fullscreen = love.system.getDeviceType() == "mobile" })
 
     shove.createLayer("mainView", {
         stencil = true,
