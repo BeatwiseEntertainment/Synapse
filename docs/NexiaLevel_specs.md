@@ -23,3 +23,18 @@ the fields for this are:
 `events` which are the animations, effects and other stuff that may happen during the gameplay, like:
 
 `spawnSprite`, `setShader`, `tween` etc..
+
+```json
+{
+    "events": [
+        {
+            time: 2.45,
+            command: "spawnSprite:<x>|<y>|<scale>|<centerOffset>|<objectTag>"
+        },
+        {
+            time: 2.46,
+            command: "tween:<tweenType>|<from>|<to>|<duration>|<ease>"
+        }
+    ]
+}
+```

@@ -40,6 +40,26 @@ function love.initialize()
 
     love.graphics.setDefaultFilter("nearest", "nearest")
 
+    if love.arg.parseGameArguments(arg)[1] == "--test" then
+        lust = require 'tests.tools.Lust'
+
+        local tests = fsutil.scanFolder("tests/specs")
+
+        if #tests <= 0 then
+            --print("[love.Test] No tests to run")
+            io.printf("{bgBrightMagenta}{brightCyan}{bold}[Love.Test]{reset}{brightWhite} : No tests to run!{reset}")
+            love.event.quit()
+        end
+
+        for _, test in ipairs(tests) do
+            local t = require((test:gsub("/", ".")):gsub("%.lua", ""))
+            t(lust)
+        end
+
+        love.event.quit()
+
+        return
+    end
 
     -- temp hack --
     ditherManager = require 'source.game.Props.DitherManager'
